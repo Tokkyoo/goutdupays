@@ -2,8 +2,10 @@ package com.goutdupays.goutdupays.controller;
 
 import com.goutdupays.goutdupays.dto.ArticleDto;
 import com.goutdupays.goutdupays.modele.Article;
+import com.goutdupays.goutdupays.modele.Categorie;
 import com.goutdupays.goutdupays.modele.User;
 import com.goutdupays.goutdupays.repository.ArticleRepository;
+import com.goutdupays.goutdupays.repository.CategorieRepository;
 import com.goutdupays.goutdupays.repository.UserRepository;
 import com.goutdupays.goutdupays.service.ArticleService;
 
@@ -30,19 +32,27 @@ public class ArticleController {
     @Autowired
     private ArticleRepository articleRepository;
 
+    @Autowired
+    private CategorieRepository categorieRepository;
+
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR')")
-    public Article create(@RequestBody Article article) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Current user: " + authentication.getName());
-        System.out.println("Authorities: " + authentication.getAuthorities());
+    public ArticleDto create(@RequestBody ArticleDto articleDto) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Categorie categorie = categorieRepository.findById(articleDto.getCategorie().getId())
+                .orElseThrow(() -> new RuntimeException("Categorie not found"));
 
-        User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + authentication.getName()));
-
+        Article article = new Article();
+        article.setName(articleDto.getName());
+        article.setDescription(articleDto.getDescription());
         article.setUtilisateur(user);
-        return articleRepository.save(article);
+        article.setCategorie(categorie);
+
+        Article savedArticle = articleRepository.save(article);
+        return new ArticleDto(savedArticle);
     }
+
 
 
     @GetMapping("/read")
@@ -50,16 +60,15 @@ public class ArticleController {
     public List<ArticleDto> read() {
         List<Article> articles = articleService.read();
         return articles.stream()
-                .map(ArticleDto::new)
+                .map(ArticleDto::new) // Ici, le constructeur mis à jour est utilisé
                 .collect(Collectors.toList());
     }
 
-    // Retourner le DTO au lieu de l'entité
     @GetMapping("/read/{id}")
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR')")
     public ArticleDto readById(@PathVariable Long id) {
         Article article = articleService.readById(id);
-        return new ArticleDto(article);
+        return new ArticleDto(article); // Ici aussi
     }
 
     // Mettre à jour l'article et retourner le DTO mis à jour
@@ -76,7 +85,13 @@ public class ArticleController {
 
         article.setName(articleDtoDetails.getName());
         article.setDescription(articleDtoDetails.getDescription());
-        // Mettre à jour d'autres champs selon les besoins
+
+        // Update category if it's provided and different
+        if (articleDtoDetails.getCategorie() != null || !article.getCategorie().getId().equals(articleDtoDetails.getCategorie().getId())) {
+            Categorie newCategorie = categorieRepository.findById(articleDtoDetails.getCategorie().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            article.setCategorie(newCategorie);
+        }
 
         Article updatedArticle = articleRepository.save(article);
         return new ArticleDto(updatedArticle);

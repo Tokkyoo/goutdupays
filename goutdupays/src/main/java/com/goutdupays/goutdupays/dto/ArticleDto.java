@@ -6,18 +6,20 @@ public class ArticleDto {
     private Long id;
     private String name;
     private String description;
+    private CategorieDto categorie;
 
-    // Constructeur sans arguments nécessaire pour la désérialisation Jackson
     public ArticleDto() {}
 
-    // Constructeur pour convertir une entité en DTO
     public ArticleDto(Article article) {
         this.id = article.getId();
         this.name = article.getName();
         this.description = article.getDescription();
+        if (article.getCategorie() != null) {
+            this.categorie = new CategorieDto(article.getCategorie());
+        }
     }
 
-    // Getters et Setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -40,5 +42,13 @@ public class ArticleDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public CategorieDto getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(CategorieDto categorie) {
+        this.categorie = categorie;
     }
 }

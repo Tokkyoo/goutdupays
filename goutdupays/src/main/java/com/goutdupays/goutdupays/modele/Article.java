@@ -30,9 +30,9 @@ public class Article {
     private User utilisateur;
 
     // Relation avec Catégorie
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "categorie_id")
-    //private Categorie categorie;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categorie_id")
+    private Categorie categorie;
 
     // Relation un-à-un avec Image
     //@OneToOne(fetch = FetchType.LAZY)

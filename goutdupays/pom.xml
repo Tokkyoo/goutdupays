@@ -25,6 +25,23 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>7.0.1.Final</version> <!-- Utilisez une version adaptée à vos besoins -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>jakarta.el</artifactId>
+			<version>3.0.3</version> <!-- Nécessaire pour l'expression language support -->
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.0.0</version> <!-- La version de l'API Jakarta Bean Validation -->
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
