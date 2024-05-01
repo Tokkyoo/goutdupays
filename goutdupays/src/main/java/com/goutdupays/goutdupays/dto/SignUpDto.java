@@ -14,11 +14,10 @@ import java.util.Set;
 @NoArgsConstructor
 public class SignUpDto {
     private Set<String> role;
+    private String firstname;
+    private String lastname;
     private String username;
     private String email;
     private String password;
-
-
-
 
 }
