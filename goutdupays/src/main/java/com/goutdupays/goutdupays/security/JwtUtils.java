@@ -31,6 +31,10 @@ public class JwtUtils {
     @Value("${bezkoder.app.jwtCookieName}")
     private String jwtCookie;
 
+    public Long getUserIdFromJwtToken(String token) {
+        Claims claims = Jwts.parserBuilder().build().parseClaimsJws(token).getBody();
+        return Long.parseLong(claims.get("id", String.class));
+    }
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
         if (cookie != null) {

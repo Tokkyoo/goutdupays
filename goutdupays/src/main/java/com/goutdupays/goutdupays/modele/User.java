@@ -100,4 +100,9 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Basket basket;
+
+
 }

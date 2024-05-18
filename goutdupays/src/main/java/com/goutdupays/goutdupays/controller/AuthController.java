@@ -1,11 +1,13 @@
 package com.goutdupays.goutdupays.controller;
 import com.goutdupays.goutdupays.dto.LoginDto;
 import com.goutdupays.goutdupays.dto.SignUpDto;
+import com.goutdupays.goutdupays.modele.Basket;
 import com.goutdupays.goutdupays.modele.ERole;
 import com.goutdupays.goutdupays.modele.Role;
 import com.goutdupays.goutdupays.modele.User;
 import com.goutdupays.goutdupays.payload.MessageResponse;
 import com.goutdupays.goutdupays.payload.UserInfoResponse;
+import com.goutdupays.goutdupays.repository.BasketRepository;
 import com.goutdupays.goutdupays.repository.RoleRepository;
 import com.goutdupays.goutdupays.security.JwtUtils;
 import com.goutdupays.goutdupays.service.UserDetailsImpl;
@@ -49,6 +51,9 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    BasketRepository basketRepository;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDto loginRequest) {
@@ -120,6 +125,12 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
+
+        //Creation d'un panier lors de l'enregistrement
+        Basket basket = new Basket();
+        basket.setQuantity(0);
+        basket.setUser(user);
+        basketRepository.save(basket);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

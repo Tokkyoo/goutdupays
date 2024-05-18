@@ -1,12 +1,18 @@
 package com.goutdupays.goutdupays.modele;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
-@Table(name = "Article")
+@Table(name ="Article")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -38,4 +44,8 @@ public class Article {
     //@OneToOne(fetch = FetchType.LAZY)
     //@JoinColumn(name = "image_id")
     //private Image image;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<BasketArticle> basketArticles;
 }
