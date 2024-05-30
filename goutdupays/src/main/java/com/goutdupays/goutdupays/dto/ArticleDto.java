@@ -6,7 +6,18 @@ public class ArticleDto {
     private Long id;
     private String name;
     private String description;
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    private Double price;
     private CategorieDto categorie;
+    private String username; // Nouveau champ pour le nom d'utilisateur
 
     public ArticleDto() {}
 
@@ -14,8 +25,12 @@ public class ArticleDto {
         this.id = article.getId();
         this.name = article.getName();
         this.description = article.getDescription();
+        this.price = article.getPrice();
         if (article.getCategorie() != null) {
             this.categorie = new CategorieDto(article.getCategorie());
+        }
+        if (article.getUtilisateur() != null) {
+            this.username = article.getUtilisateur().getUsername(); // Assigner le nom d'utilisateur
         }
     }
 
@@ -50,5 +65,13 @@ public class ArticleDto {
 
     public void setCategorie(CategorieDto categorie) {
         this.categorie = categorie;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

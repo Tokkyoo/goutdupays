@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/article")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class ArticleController {
 
     @Autowired
@@ -46,13 +47,13 @@ public class ArticleController {
         Article article = new Article();
         article.setName(articleDto.getName());
         article.setDescription(articleDto.getDescription());
+        article.setPrice(articleDto.getPrice());
         article.setUtilisateur(user);
         article.setCategorie(categorie);
 
         Article savedArticle = articleRepository.save(article);
         return new ArticleDto(savedArticle);
     }
-
 
 
     @GetMapping("/read")
