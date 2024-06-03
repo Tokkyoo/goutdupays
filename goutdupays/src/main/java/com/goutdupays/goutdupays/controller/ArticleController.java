@@ -8,10 +8,8 @@ import com.goutdupays.goutdupays.repository.ArticleRepository;
 import com.goutdupays.goutdupays.repository.CategorieRepository;
 import com.goutdupays.goutdupays.repository.UserRepository;
 import com.goutdupays.goutdupays.service.ArticleService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -53,14 +51,12 @@ public class ArticleController {
         return new ArticleDto(savedArticle);
     }
 
-
-
     @GetMapping("/read")
     @PreAuthorize("isAuthenticated()")
     public List<ArticleDto> read() {
         List<Article> articles = articleService.read();
         return articles.stream()
-                .map(ArticleDto::new) // Ici, le constructeur mis à jour est utilisé
+                .map(ArticleDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -68,44 +64,40 @@ public class ArticleController {
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR')")
     public ArticleDto readById(@PathVariable Long id) {
         Article article = articleService.readById(id);
-        return new ArticleDto(article); // Ici aussi
+        return new ArticleDto(article);
     }
 
-    // Mettre à jour l'article et retourner le DTO mis à jour
     @PutMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR')")
     public ArticleDto update(@PathVariable Long id, @RequestBody ArticleDto articleDtoDetails) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Article not found for this id :: " + id));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!article.getUtilisateur().getUsername().equals(authentication.getName())) {
+        if (!article.getUtilisateur().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
             throw new RuntimeException("Not authorized to update this article");
         }
 
         article.setName(articleDtoDetails.getName());
         article.setDescription(articleDtoDetails.getDescription());
 
-        // Update category if it's provided and different
-        if (articleDtoDetails.getCategorie() != null || !article.getCategorie().getId().equals(articleDtoDetails.getCategorie().getId())) {
+        if (articleDtoDetails.getCategorie() != null && !article.getCategorie().getId().equals(articleDtoDetails.getCategorie().getId())) {
             Categorie newCategorie = categorieRepository.findById(articleDtoDetails.getCategorie().getId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElseThrow(() -> new RuntimeException("Categorie not found"));
             article.setCategorie(newCategorie);
         }
 
-        Article updatedArticle = articleRepository.save(article);
-        return new ArticleDto(updatedArticle);
+        articleRepository.save(article);
+
+        return new ArticleDto(article);
     }
 
-    // Supprimer l'article et renvoyer une réponse appropriée
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR')")
     public String delete(@PathVariable Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Article not found for this id :: " + id));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!article.getUtilisateur().getUsername().equals(authentication.getName())) {
+        if (!article.getUtilisateur().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
             throw new RuntimeException("Not authorized to delete this article");
         }
 
