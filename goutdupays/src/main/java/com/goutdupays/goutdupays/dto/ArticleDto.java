@@ -1,25 +1,20 @@
 package com.goutdupays.goutdupays.dto;
 
 import com.goutdupays.goutdupays.modele.Article;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArticleDto {
     private Long id;
     private String name;
     private String description;
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     private Double price;
     private CategorieDto categorie;
-    private String username; // Nouveau champ pour le nom d'utilisateur
+    private String username;
+    private List<ImageArticleDto> images;
 
-    public ArticleDto() {}
+    public ArticleDto() {
+    }
 
     public ArticleDto(Article article) {
         this.id = article.getId();
@@ -30,13 +25,17 @@ public class ArticleDto {
             this.categorie = new CategorieDto(article.getCategorie());
         }
         if (article.getUtilisateur() != null) {
-            this.username = article.getUtilisateur().getUsername(); // Assigner le nom d'utilisateur
+            this.username = article.getUtilisateur().getUsername();
+        }
+        if (article.getImages() != null) {
+            this.images = article.getImages().stream()
+                    .map(ImageArticleDto::new)
+                    .collect(Collectors.toList());
         }
     }
 
-    // Getters and Setters
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -44,7 +43,7 @@ public class ArticleDto {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -52,15 +51,23 @@ public class ArticleDto {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public Double getPrice() {
+        return this.price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
     public CategorieDto getCategorie() {
-        return categorie;
+        return this.categorie;
     }
 
     public void setCategorie(CategorieDto categorie) {
@@ -68,10 +75,18 @@ public class ArticleDto {
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public List<ImageArticleDto> getImages() {
+        return this.images;
+    }
+
+    public void setImages(List<ImageArticleDto> images) {
+        this.images = images;
     }
 }
