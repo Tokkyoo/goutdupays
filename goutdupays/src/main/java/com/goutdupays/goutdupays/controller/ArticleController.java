@@ -49,6 +49,7 @@ public class ArticleController {
         article.setUtilisateur(user);
         article.setCategorie(categorie);
 
+
         Article savedArticle = articleRepository.save(article);
         return new ArticleDto(savedArticle);
     }
