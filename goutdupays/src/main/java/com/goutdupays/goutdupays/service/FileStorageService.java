@@ -1,5 +1,6 @@
 package com.goutdupays.goutdupays.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,12 +12,11 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class FileStorageService {
-
     private final Path fileStorageLocation;
 
-    public FileStorageService() {
-        this.fileStorageLocation = Paths.get("uploads").toAbsolutePath().normalize();
-
+    public FileStorageService(@Value("${file.upload-dir}") String uploadDir) {
+        // Utilisation d'un chemin absolu directement depuis les propriétés
+        this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
@@ -24,33 +24,17 @@ public class FileStorageService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
-
         try {
             if (fileName.contains("..")) {
                 throw new RuntimeException("Sorry! Filename contains invalid path sequence " + fileName);
             }
-
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-            return fileName; // Return the file name instead of the full path
+            return fileName;
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
-        }
-    }
-
-    public Path loadFileAsResource(String fileName) {
-        try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-            if (Files.exists(filePath)) {
-                return filePath;
-            } else {
-                throw new RuntimeException("File not found " + fileName);
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("File not found " + fileName, ex);
         }
     }
 }
