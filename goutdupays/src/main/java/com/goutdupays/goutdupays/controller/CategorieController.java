@@ -40,14 +40,14 @@ public class CategorieController {
     }
 
     @GetMapping("/read/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("isAuthenticated()")
     public CategorieDto readById(@PathVariable Long id) {
         Categorie categorie = categorieService.readById(id);
         return new CategorieDto(categorie);
     }
 
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("isAuthenticated()")
     public CategorieDto update(@PathVariable Long id, @RequestBody CategorieDto categorieDto) {
         Categorie categorie = categorieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found for this id :: " + id));

@@ -5,6 +5,7 @@ import com.goutdupays.goutdupays.modele.ImageArticle;
 import com.goutdupays.goutdupays.service.ImageArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,12 +15,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/images")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class ImageArticleController {
 
     @Autowired
     private ImageArticleService imageArticleService;
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
     public ResponseEntity<ImageArticleDto> uploadImageArticle(@RequestParam("file") MultipartFile file,
                                                               @RequestParam("description") String description,
                                                               @RequestParam("articleId") Long articleId) {
@@ -32,6 +34,7 @@ public class ImageArticleController {
     }
 
     @GetMapping("/read")
+    @PreAuthorize("isAuthenticated()")
     public List<ImageArticleDto> getAllImageArticles() {
         return imageArticleService.getAllImageArticles().stream()
                 .map(ImageArticleDto::new)
