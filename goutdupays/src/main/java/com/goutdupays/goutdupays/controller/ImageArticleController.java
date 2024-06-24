@@ -15,12 +15,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/images")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class ImageArticleController {
 
     @Autowired
     private ImageArticleService imageArticleService;
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
     public ResponseEntity<ImageArticleDto> uploadImageArticle(@RequestParam("file") MultipartFile file,
                                                               @RequestParam("description") String description,
                                                               @RequestParam("articleId") Long articleId) {
