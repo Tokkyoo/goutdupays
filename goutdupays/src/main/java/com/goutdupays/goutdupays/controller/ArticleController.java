@@ -9,6 +9,8 @@ import com.goutdupays.goutdupays.repository.CategorieRepository;
 import com.goutdupays.goutdupays.repository.UserRepository;
 import com.goutdupays.goutdupays.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -71,6 +73,13 @@ public class ArticleController {
         return new ArticleDto(article);
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Article>> searchArticlesByName(@RequestParam String name) {
+        List<Article> articles = articleRepository.findByNameContaining(name);
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
+
     @PutMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR')")
     public ArticleDto update(@PathVariable Long id, @RequestBody ArticleDto articleDtoDetails) {
@@ -108,5 +117,18 @@ public class ArticleController {
 
         articleRepository.deleteById(id);
         return "Article deleted successfully";
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ArticleDto>> getArticlesByUserId(@PathVariable Long userId) {
+        List<Article> articles = articleRepository.findByUtilisateurId(userId);
+        if (articles.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        List<ArticleDto> articlesDto = articles.stream()
+                .map(ArticleDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(articlesDto);
     }
 }

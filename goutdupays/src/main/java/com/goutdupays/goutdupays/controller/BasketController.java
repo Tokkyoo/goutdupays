@@ -16,10 +16,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class BasketController {
 
     @Autowired
@@ -41,6 +44,20 @@ public class BasketController {
         return new ResponseEntity<>(basket, HttpStatus.OK);
     }
 
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('USER')")
+    public Basket getBasket(@PathVariable Long userId) {
+        Basket basket = basketRepository.findByUserId(userId);
+        // Ajouter les détails des articles au panier
+        Set<BasketArticle> basketArticlesWithDetails = basket.getBasketArticles().stream().map(basketArticle -> {
+            Article article = articleRepository.findById(basketArticle.getId().getArticleId()).orElse(null);
+            basketArticle.setArticle(article);
+            return basketArticle;
+        }).collect(Collectors.toSet());
+        basket.setBasketArticles(basketArticlesWithDetails);
+        return basket;
+    }
+
     @GetMapping("/basket/{basketId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Basket> getBasketById(@PathVariable(value = "basketId") Long basketId) {
@@ -52,12 +69,11 @@ public class BasketController {
         return new ResponseEntity<>(basket, HttpStatus.OK);
     }
 
-    @PostMapping("/basket/{basketId}/addArticle")
-    public ResponseEntity<Basket> addArticleToBasket(@PathVariable Long basketId, @RequestBody AddArticleRequest addArticleRequest) {
-        Basket basket = basketRepository.findById(basketId).orElse(null);
-        if (basket == null) {
-            return ResponseEntity.notFound().build();
-        }
+    @PostMapping("/basket/{userId}/addArticle")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Basket> addArticleToBasket(@PathVariable Long userId, @RequestBody AddArticleRequest addArticleRequest) {
+        Basket basket = basketRepository.findByUserId(userId);
+
 
         Article article = articleRepository.findById(addArticleRequest.getArticleId()).orElse(null);
         if (article == null) {
@@ -75,8 +91,7 @@ public class BasketController {
             basket.getBasketArticles().add(newBasketArticle);
         }
 
-        // Mettre à jour la quantité totale du panier
-            basket.setQuantity(basket.getQuantity() + addArticleRequest.getQuantity());
+        basket.setQuantity(basket.getQuantity() + addArticleRequest.getQuantity());
 
         Basket updatedBasket = basketRepository.save(basket);
         return ResponseEntity.ok(updatedBasket);

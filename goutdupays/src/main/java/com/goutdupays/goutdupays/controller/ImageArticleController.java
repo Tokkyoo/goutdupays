@@ -50,8 +50,7 @@ public class ImageArticleController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ImageArticleDto> updateImageArticle(@PathVariable Long id,
-                                                              @RequestParam("file") MultipartFile file,
-                                                              @RequestParam("description") String description) {
+                                                              @RequestParam("file") MultipartFile file, @RequestParam("description") String description) {
         try {
             ImageArticle updatedImageArticle = imageArticleService.updateImageArticle(id, file, description);
             return ResponseEntity.ok(new ImageArticleDto(updatedImageArticle));
