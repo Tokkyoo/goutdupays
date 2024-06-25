@@ -118,4 +118,17 @@ public class ArticleController {
         articleRepository.deleteById(id);
         return "Article deleted successfully";
     }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ArticleDto>> getArticlesByUserId(@PathVariable Long userId) {
+        List<Article> articles = articleRepository.findByUtilisateurId(userId);
+        if (articles.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        List<ArticleDto> articlesDto = articles.stream()
+                .map(ArticleDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(articlesDto);
+    }
 }

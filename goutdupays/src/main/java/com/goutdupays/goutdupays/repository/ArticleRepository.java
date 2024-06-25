@@ -16,4 +16,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findAllWithImages();
 
     List<Article> findByNameContaining(String name);
+
+    List<Article> findByUtilisateurId(Long utilisateurId);
 }
