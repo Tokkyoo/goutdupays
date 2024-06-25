@@ -9,6 +9,8 @@ import com.goutdupays.goutdupays.repository.CategorieRepository;
 import com.goutdupays.goutdupays.repository.UserRepository;
 import com.goutdupays.goutdupays.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -69,6 +71,13 @@ public class ArticleController {
     public ArticleDto readById(@PathVariable Long id) {
         Article article = articleService.readById(id);
         return new ArticleDto(article);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Article>> searchArticlesByName(@RequestParam String name) {
+        List<Article> articles = articleRepository.findByNameContaining(name);
+        return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")

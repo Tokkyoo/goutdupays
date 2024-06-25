@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "Article")
+@Table(name = "article")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,4 +46,15 @@ public class Article {
     //@OneToOne(fetch = FetchType.LAZY)
     //@JoinColumn(name = "image_id")
     //private Image image;
+
+    public void addImage(ImageArticle image) {
+        images.add(image);
+        image.setArticle(this);
+    }
+
+    public void removeImage(ImageArticle image) {
+        images.remove(image);
+        image.setArticle(null);
+    }
+
 }

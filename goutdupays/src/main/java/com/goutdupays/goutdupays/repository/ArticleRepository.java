@@ -14,4 +14,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("SELECT DISTINCT a FROM Article a LEFT JOIN FETCH a.images")
     List<Article> findAllWithImages();
+
+    List<Article> findByNameContaining(String name);
 }
