@@ -107,6 +107,30 @@ public class BasketController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/basket/{userId}/removeArticle/{articleId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Basket> removeArticleFromBasket(@PathVariable Long userId, @PathVariable Long articleId) {
+        Basket basket = basketRepository.findByUserId(userId);
+
+        Article article = articleRepository.findById(articleId).orElse(null);
+        if (article == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        BasketArticle existingBasketArticle = basketArticleRepository.findByBasketAndArticle(basket, article);
+        if (existingBasketArticle != null) {
+            basket.getBasketArticles().remove(existingBasketArticle);
+            basket.setQuantity(basket.getQuantity() - existingBasketArticle.getQuantity());
+            basketArticleRepository.delete(existingBasketArticle);
+
+            Basket updatedBasket = basketRepository.save(basket);
+            return ResponseEntity.ok(updatedBasket);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
     public static class AddArticleRequest {
         private Long articleId;
         private int quantity;
@@ -125,6 +149,27 @@ public class BasketController {
 
         public void setQuantity(int quantity) {
             this.quantity = quantity;
+        }
+
+        public static class RemoveArticleRequest {
+            private Long articleId;
+            private int quantity;
+
+            public Long getArticleId() {
+                return articleId;
+            }
+
+            public void setArticleId(Long articleId) {
+                this.articleId = articleId;
+            }
+
+            public int getQuantity() {
+                return quantity;
+            }
+
+            public void setQuantity(int quantity) {
+                this.quantity = quantity;
+            }
         }
     }
 }
