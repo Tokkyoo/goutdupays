@@ -41,9 +41,9 @@ public class ProfilController {
         return new ResponseEntity<>(profil, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{userId}")
+    @PatchMapping("/update/{userId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ProfilDto> getUserById(@PathVariable(value = "userId") Long userId, @RequestBody ProfilDto profilDto) {
+    public ResponseEntity<ProfilDto> updateUserById(@PathVariable(value = "userId") Long userId, @RequestBody ProfilDto profilDto) {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
