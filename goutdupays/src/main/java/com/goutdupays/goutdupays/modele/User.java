@@ -23,11 +23,16 @@ public class User {
     private Long id;
 
     private String firstname;
+
     private String lastname;
+
     private String username;
 
     private String email;
+
+    @Lob
     private String description;
+
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
