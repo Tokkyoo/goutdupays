@@ -22,28 +22,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
     private String firstname;
     private String lastname;
     private String username;
 
     private String email;
-
+    private String description;
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -71,6 +55,22 @@ public class User {
         this.id = id;
     }
 
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -78,6 +78,10 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getDescription() {return description;}
+
+    public void setDescription(String description) {this.description = description;}
 
     public String getEmail() {
         return email;
@@ -105,6 +109,7 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Basket basket;
+
 
 
 }
