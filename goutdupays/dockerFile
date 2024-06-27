@@ -1,0 +1,12 @@
+# Utiliser une image de base JDK pour construire l'application
+FROM openjdk:11-jdk-slim AS build
+WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
+
+# Utiliser une image de base JRE pour exécuter l'application
+FROM openjdk:11-jre-slim
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
