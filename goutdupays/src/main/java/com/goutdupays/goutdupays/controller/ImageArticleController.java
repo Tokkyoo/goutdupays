@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/images")
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
+@RequestMapping("images")
+@CrossOrigin(origins = "http://goutdupays.vintzen.fr", maxAge = 3600, allowCredentials="true")
 public class ImageArticleController {
 
     @Autowired
