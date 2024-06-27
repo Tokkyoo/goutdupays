@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://goutdupays.vintzen.fr", maxAge = 3600, allowCredentials="true")
 public class BasketController {
 
     @Autowired

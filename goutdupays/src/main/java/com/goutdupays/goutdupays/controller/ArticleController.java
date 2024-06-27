@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("article")
-@CrossOrigin(origins = "http://goutdupays.vintzen.fr", maxAge = 3600, allowCredentials="true")
 public class ArticleController {
 
     @Autowired

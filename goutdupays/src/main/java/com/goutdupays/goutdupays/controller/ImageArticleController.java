@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("images")
-@CrossOrigin(origins = "http://goutdupays.vintzen.fr", maxAge = 3600, allowCredentials="true")
 public class ImageArticleController {
 
     @Autowired

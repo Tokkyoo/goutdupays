@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 //@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("auth")
-@CrossOrigin(origins = "http://goutdupays.vintzen.fr", maxAge = 3600, allowCredentials="true")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
