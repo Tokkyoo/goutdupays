@@ -20,9 +20,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class BasketController {
 
     @Autowired
