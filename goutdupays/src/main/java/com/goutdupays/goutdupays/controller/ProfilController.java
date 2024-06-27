@@ -31,6 +31,7 @@ public class ProfilController {
             return ResponseEntity.notFound().build();
         }
         ProfilDto profil = new ProfilDto();
+        profil.setId(userOptional.get().getId());
         profil.setFirstName(userOptional.get().getFirstname());
         profil.setLastName(userOptional.get().getLastname());
         profil.setUsername(userOptional.get().getUsername());

@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ProfilDto {
+    private Long id;
     private String username;
     private String email;
     private String password;
